@@ -1,0 +1,3 @@
+G:/Meu Drive/UFU/Sistemas de Informação 2023/2º Semestre 2023.2/3. Algoritmos e Programação II - Thiago/Zoo/cmake-build-debug/CMakeFiles/Zoo.dir
+G:/Meu Drive/UFU/Sistemas de Informação 2023/2º Semestre 2023.2/3. Algoritmos e Programação II - Thiago/Zoo/cmake-build-debug/CMakeFiles/edit_cache.dir
+G:/Meu Drive/UFU/Sistemas de Informação 2023/2º Semestre 2023.2/3. Algoritmos e Programação II - Thiago/Zoo/cmake-build-debug/CMakeFiles/rebuild_cache.dir
