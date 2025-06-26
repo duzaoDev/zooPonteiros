@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <locale.h>
+//#include <locale.h>
+#include <ctype.h>
 
 ///////////////////// TRABALHO APRESENTADO PARA DISCIPLINA DE ALGORITMOS E PROGRAMAÇÃO II
 /////////////////////NO CURSO DE SISTEMAS DE INFORMAÇÃO, NA UNIVERSIDADE FEDERAL DE UBERLÂNDIA
@@ -44,7 +45,7 @@ int main() {
     //setlocale para organizar os acentos, entretanto na IDE que utilizei (CLION) continuou esquisito kkkkk;
     ////IMPORTANTE, por conta disso, se atente a usar vírgulas para os números que são float
     //// na CLION funcionou somente com vírgulas, no online gbd funcionou somente com pontos;
-    setlocale(LC_ALL, "Portuguese");
+  //  setlocale(LC_ALL, "Portuguese");
     Zoo zoo;
     int opcao;
 
@@ -67,51 +68,51 @@ int main() {
         //laço switch case para acessar as opões impressas acima;
         switch (opcao) {
             case 1:
-                system("cls");
+                system("clear");
                 inicializar(&zoo); // chama função de inicialização;
                 printf("Bem-vindo(a) ao Sistema de Catalogação Virtual do Zoológico.\n");
                 break;
             case 2:
-                system("cls");
+                system("clear");
                 catalogoSetores(&zoo); // chama função que apresenta o catálogo dos setores;
                 break;
             case 3:
-                system("cls");
+                system("clear");
                 listaSetores(&zoo); // outra função que mostra os setores para ficar mais fácil de visualizar ao escolher
                 // o setor que deseja escolher para inserir os animais;
                 inserirAnimais(&zoo);
                 break;
             case 4:
-                system("cls");
+                system("clear");
                 listaSetores(&zoo); // IDEM
                 animalMaisPesado(&zoo); // chama função para encontrar animal mais pesado;
                 break;
             case 5: /////FUNÇÃO EXTRA
-                system("cls");
+                system("clear");
                 listaSetores(&zoo); // IDEM
                 animalMaisAlto(&zoo); // função para encontrar o animal mais alto
                 break;
             case 6:
-                system("cls");
+                system("clear");
                 listaSetores(&zoo);
                 criarNovoSetor(&zoo); // função para criar novo setor, seguido parametros ad inicialização
                 break;
             case 7:
-                system("cls");
+                system("clear");
                 listaSetores(&zoo);
                 excluirSetor(&zoo); // função para excluir setores inseridos posteriormente
                 break;
             case 8: ////2a função extra, com alguns bugs que não consegui resolver, mas resolvi deixar no programa
-                system("cls");
+                system("clear");
                 imprimirPopulacaoZoologico(&zoo); // função que busca todos os animais inseridos e imprime a população
                 // do zoologico;
                 break;
            case 0:
-                system("cls");
+                system("clear");
                 printf("Saindo do programa.\n"); // sai do programa;
                 break;
             default:
-                system("cls");
+                system("clear");
                 printf("Opção inválida.\n"); // retorna opção inválida se não for digitado nenhum numero de 1-8;
 
         }
@@ -138,19 +139,19 @@ void inicializar(Zoo *zoo) {
     // nomeia os setores, percorrendo o primeiro indice da matriz [i]
     for (int i = 0; i < zoo->num_setores; i++) {
         zoo->setores[i] = (char *)malloc(50 * sizeof(char));
-        printf("Nome do setor %d: ", i + 1);
+        printf("Nome do setor %d de %d: ", i + 1, zoo->num_setores);
         scanf(" %[^\n]s", zoo->setores[i]);
         zoo->animais[i] = (info_animal **)malloc(zoo->num_jaulas_por_setor * sizeof(info_animal *));
         for (int j = 0; j < zoo->num_jaulas_por_setor; j++) {
             zoo->animais[i][j] = (info_animal *)malloc(zoo->num_animais_por_jaula * sizeof(info_animal));
         }
     }
-    system("cls");
+    system("clear");
     printf("Sistema inicializado com sucesso.\n\n");
 
 }
 void listaSetores(Zoo *zoo) {
-    system("cls");
+    system("clear");
     ////função para auxiliar a visualização e a escolha dos setores na funções necessarias
     // imprime os setores com numero total de jaulas e animais por jaula
     // percorrendo o indice i da matriz para garantir que todos os setores serão impressos
@@ -160,7 +161,7 @@ void listaSetores(Zoo *zoo) {
 }
 
 void catalogoSetores(Zoo *zoo) {
-    system("cls");
+    system("clear");
     // imprime os setores com numero total de jaulas e animais por jaula
     // percorrendo o indice i da matriz para garantir que todos os setores serão impressos
     printf("Catálogo de Setores:\n");
@@ -175,13 +176,15 @@ void inserirAnimais(Zoo *zoo) {
     int numJaula;
 
     //usuario insere o nome do setor;
-    system("cls");
+    system("clear");
+    listaSetores(zoo);
     printf("Nome do setor: ");
     scanf(" %[^\n]", nomeSetor);
 
     //percorre o indice e encontra o setor utilizando a função de comparar strings (strcmp)
     for (int i = 0; i < zoo->num_setores; i++) {
         if (strcmp(nomeSetor, zoo->setores[i]) == 0) {
+            printf("Jaulas do setor: %d\n", zoo->num_jaulas_por_setor);
             printf("Número da jaula: ");
             scanf("%d", &numJaula);
             numJaula--;
@@ -196,23 +199,25 @@ void inserirAnimais(Zoo *zoo) {
                     zoo->animais[i][numJaula][k].codigo = (char *)malloc(50* sizeof(char));
                     zoo->animais[i][numJaula][k].altura = (float *)malloc(sizeof(float));
 
-                    system("cls");
+                    system("clear");
 
                     printf("\tInserir Animal em %s\n\n", nomeSetor);
                     printf("Setor - %s\n", nomeSetor);
                     printf("\tJaula %d de %d\n", numJaula + 1, zoo->num_jaulas_por_setor);
 
-                    printf("Código do animal %d: ", k + 1);
-                    scanf(" %[^\n]s", zoo->animais[i][numJaula][k].codigo);
+                    // Geração automática do código do animal com as duas primeiras letras do setor
+                    char letrasSetor[3] = "XX";
+                    letrasSetor[0] = toupper(zoo->setores[i][0]);
+                    letrasSetor[1] = toupper(zoo->setores[i][1]);
+                    letrasSetor[2] = '\0';
+                    snprintf(zoo->animais[i][numJaula][k].codigo, 50, "%s%dJ%d", letrasSetor, k + 1, numJaula + 1);
+                    printf("Código do animal %d gerado automaticamente: %s\n", k + 1, zoo->animais[i][numJaula][k].codigo);
 
                     printf("Nome do animal %d: ", k + 1);
                     scanf(" %[^\n]s", zoo->animais[i][numJaula][k].nome);
 
                     printf("Espécie do animal %d: ", k + 1);
                     scanf(" %[^\n]s", zoo->animais[i][numJaula][k].especie);
-
-                    //usar vírgula por conta do setlocale, senão dá erro. entretanto fiz um teste no onlinegdb
-                    // e lá só funcionou com ponto (.);
 
                     printf("Peso do animal %d (em kilos, usar vírgula): ", k + 1);
                     scanf("%f", zoo->animais[i][numJaula][k].peso);
@@ -221,7 +226,7 @@ void inserirAnimais(Zoo *zoo) {
                     scanf("%f", zoo->animais[i][numJaula][k].altura);
                     printf("\n");
                 }
-                system("cls");
+                system("clear");
                 printf("Animais inseridos com sucesso na jaula %d do setor %s.\n", numJaula + 1, nomeSetor);
                 return;
             } else {
@@ -233,82 +238,6 @@ void inserirAnimais(Zoo *zoo) {
     printf("Setor não encontrado.\n");
 }
 
-///// versão mais elaborada da função acima, entretanto acarretou problemas na função criarNovoSetor que não consegui
-///// resolver :(
-///// deixei aqui para não perder e no futuro tentar corrigir.
-/*void inserirAnimais(Zoo *zoo) {
-
-    char nomeSetor[50];
-    int numJaula;
-
-    printf("Nome do setor: ");
-    scanf(" %[^\n]", nomeSetor);
-
-        for (int i = 0; i < zoo->num_setores; i++) {
-            if (strcmp(nomeSetor, zoo->setores[i]) == 0) {
-                while (1) { // Adiciona um loop para continuar pedindo um número de jaula
-                    printf("Número da jaula: ");
-                    scanf("%d", &numJaula);
-                    numJaula--;
-
-                    if (numJaula >= 0 && numJaula < zoo->num_jaulas_por_setor) {
-                        while (zoo->animais[i][numJaula][0].nome != NULL &&
-                               zoo->animais[i][numJaula][0].codigo != NULL &&
-                               zoo->animais[i][numJaula][0].peso != NULL &&
-                               zoo->animais[i][numJaula][0].altura != NULL &&
-                               zoo->animais[i][numJaula][0].especie != NULL) {
-                            printf("Jaula já está preenchida. Por favor, insira um número de jaula válido.\n");
-                            printf("Número da jaula: ");
-                            scanf("%d", &numJaula);
-                            numJaula--;
-                        }
-                        break; // Sai do loop quando um número de jaula válido é inserido
-                    } else {
-                        printf("Número de jaula inválido. Por favor, insira um número de jaula válido.\n");
-                    }
-                }
-                for (int k = 0; k < zoo->num_animais_por_jaula; k++) {
-                    zoo->animais[i][numJaula][k].nome = (char *) malloc(50 * sizeof(char));
-                    zoo->animais[i][numJaula][k].peso = (float *) malloc(sizeof(float));
-                    zoo->animais[i][numJaula][k].especie = (char *) malloc(50 * sizeof(char));
-                    zoo->animais[i][numJaula][k].codigo = (char *) malloc(50 * sizeof(char));
-                    zoo->animais[i][numJaula][k].altura = (float *) malloc(sizeof(float));
-
-                    system("cls");
-
-                    printf("Setor - %s\n", nomeSetor);
-                    printf("\tJaula %d de %d\n", numJaula + 1, zoo->num_jaulas_por_setor);
-
-                    printf("Código do animal %d: ", k + 1);
-                    scanf(" %[^\n]s", zoo->animais[i][numJaula][k].codigo);
-
-                    printf("Nome do animal %d: ", k + 1);
-                    scanf(" %[^\n]s", zoo->animais[i][numJaula][k].nome);
-
-                    printf("Espécie do animal %d: ", k + 1);
-                    scanf(" %[^\n]s", zoo->animais[i][numJaula][k].especie);
-
-                    //usar vírgula por conta do setlocale, senão dá erro. entretanto fiz um teste no onlinegdb
-                    // e lá só funcionou com ponto (.);
-
-                    printf("Peso do animal %d (em kilos, usar vírgula): ", k + 1);
-                    scanf("%f", zoo->animais[i][numJaula][k].peso);
-
-                    printf("Altura do animal %d (em metros, usar vírgula): ", k + 1);
-                    scanf("%f", zoo->animais[i][numJaula][k].altura);
-                    printf("\n");
-                }
-                system("cls");
-                printf("Animais inseridos com sucesso na jaula %d do setor %s.\n", numJaula + 1, nomeSetor);
-                return;
-            } else {
-                printf("Número de jaula inválido.\n");
-                return;
-            }
-        }
-        printf("Setor não encontrado.\n");
-    }
-*/
 
 
 
@@ -350,7 +279,7 @@ void animalMaisPesado(Zoo *zoo) {
             }
         }
 
-        system("cls");
+        system("clear");
         if (nome != NULL && strlen(nome) > 0) {
             // exibe o nome do animal mais pesado, seu peso e o nome do setor
             printf("O animal mais pesado do setor %s é: %s, com %.2f kilos\n", nomeSetor, nome, maiorPeso);
@@ -397,7 +326,7 @@ void animalMaisAlto (Zoo *zoo) {
                 }
             }
         }
-        system("cls");
+        system("clear");
         if (nome != NULL && strlen(nome) > 0) {
             printf("O animal mais alto do setor %s é: %s, com %.2f metros\n", nomeSetor, nome, maiorAltura);
         }else{
@@ -437,7 +366,7 @@ void criarNovoSetor(Zoo *zoo) {
             zoo->animais[zoo->num_setores - 1][j][k].codigo = NULL;
         }
     }
-
+    system("clear");
     printf("Novo setor inserido com sucesso!\n");
 
 }
@@ -450,7 +379,6 @@ void excluirSetor(Zoo *zoo){
     int indiceSetor = -1;
     //procura o indice do setor a ser removido no vetor de setores do zoologico
     for (int i = 0; i < zoo->num_setores; i++) {
-        //compara a string do nome do setor
         if (strcmp(nomeSetor, zoo->setores[i]) == 0) {
             indiceSetor = i;
             break;
@@ -458,18 +386,8 @@ void excluirSetor(Zoo *zoo){
     }
 
     if (indiceSetor != -1) {
-        // libera memoria alocada para o nome do setoer a ser removido
+        // libera memoria alocada para o nome do setor a ser removido
         free(zoo->setores[indiceSetor]);
-
-        //limpa os campos de animal dentro do setor a ser removido
-        for (int j = 0; j < zoo->num_jaulas_por_setor; j++) {
-            for (int k = 0; k < zoo->num_animais_por_jaula; k++) {
-                zoo->animais[indiceSetor][j][k].nome = NULL;
-                zoo->animais[indiceSetor][j][k].peso = NULL;
-                zoo->animais[indiceSetor][j][k].altura = NULL;
-                zoo->animais[indiceSetor][j][k].especie = NULL;
-            }
-        }
 
         // libera a memória alocada para os campos de cada animal dentro do setor a ser removido
         for (int j = 0; j < zoo->num_jaulas_por_setor; j++) {
@@ -478,29 +396,28 @@ void excluirSetor(Zoo *zoo){
                 free(zoo->animais[indiceSetor][j][k].peso);
                 free(zoo->animais[indiceSetor][j][k].altura);
                 free(zoo->animais[indiceSetor][j][k].especie);
+                free(zoo->animais[indiceSetor][j][k].codigo);
             }
-            // libera a memória alocada para as jaulas dentro do setor a ser removido
             free(zoo->animais[indiceSetor][j]);
-        }  // libera a memória alocada para o vetor de animais dentro do setor a ser removido
+        }
         free(zoo->animais[indiceSetor]);
 
         // move os setores e animais restantes para ocupar o espaço do setor removido
         for (int i = indiceSetor; i < zoo->num_setores - 1; i++) {
             zoo->setores[i] = zoo->setores[i + 1];
             zoo->animais[i] = zoo->animais[i + 1];
-            zoo->setores[zoo->num_setores - 1] = NULL;
-            zoo->animais[zoo->num_setores - 1] = NULL;
         }
 
         // realoca memória para reduzir o tamanho do array de setores e animais
         zoo->setores = (char **)realloc(zoo->setores, (zoo->num_setores - 1) * sizeof(char *));
         zoo->animais = (info_animal ***)realloc(zoo->animais, (zoo->num_setores - 1) * sizeof(info_animal **));
 
-        //retirar -1 no indice dos setores;
         zoo->num_setores--;
 
+        system("clear");
         printf("Setor removido com sucesso!\n");
     } else {
+        system("clear");
         printf("Setor não encontrado.\n");
     }
 }
@@ -511,10 +428,11 @@ void imprimirPopulacaoZoologico(Zoo *zoo) {
     ////essa função percorre todos os indices da matriz e imprime todas as informações dos animais inseridos
     ////no zoologico.
 
-    system("cls");
+    system("clear");
+    printf("População do Zoológico\n");
     for (int i = 0; i < zoo->num_setores; i++) {
         if (zoo->setores[i] != NULL) {
-            printf("População do Zoológico\n");
+           
             printf("Setor: %s\n", zoo->setores[i]);
             for (int j = 0; j < zoo->num_jaulas_por_setor; j++) {
                 printf("\t\tJaula %d:\n", j + 1);
@@ -527,8 +445,8 @@ void imprimirPopulacaoZoologico(Zoo *zoo) {
                         printf("  Animal %d:\n", k + 1);
                         printf("    Código: %s\n", zoo->animais[i][j][k].codigo);
                         printf("    Nome: %s\n", zoo->animais[i][j][k].nome);
-                        printf("    Peso: %.2f\n", *zoo->animais[i][j][k].peso);
-                        printf("    Altura: %.2f\n", *zoo->animais[i][j][k].altura);
+                        printf("    Peso: %.2fkg\n", *zoo->animais[i][j][k].peso);
+                        printf("    Altura: %.2fm\n", *zoo->animais[i][j][k].altura);
                         printf("    Espécie: %s\n", zoo->animais[i][j][k].especie);
                     }
                 }
